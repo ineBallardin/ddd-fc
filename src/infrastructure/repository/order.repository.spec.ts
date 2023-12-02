@@ -11,7 +11,6 @@ import ProductRepository from "./product.repository";
 import Product from "../../domain/entity/product";
 import OrderItem from "../../domain/entity/order_item";
 import Order from "../../domain/entity/order";
-import orderRepository from "./order.repository";
 
 describe("Order repository test", () => {
   let sequelize: Sequelize;
@@ -85,107 +84,107 @@ describe("Order repository test", () => {
 
   it("should update an order", async () => {
     const customerRepository = new CustomerRepository();
-        const customer = new Customer("123", "Customer 1");
-        const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
-        customer.changeAddress(address);
-        await customerRepository.create(customer);
-
-        const productRepository = new ProductRepository();
-        const product1 = new Product("1", "Product 1", 100);
-        await productRepository.create(product1);
-        
-        const product2 = new Product("2", "Product 2", 200);
-        await productRepository.create(product2);
-        
-        const product3 = new Product("3", "Product 3", 300);
-        await productRepository.create(product3);    
-        
-        const orderItem1 = new OrderItem(
-          "OI1",
-          "Order Item 1",
-          product1.price,
-          product1.id,
-          1
-        );
-        const orderItem2 = new OrderItem(
-          "OI2",
-          "Order Item 2",
-          product2.price,
-          product2.id,
-          2
-        );
-    
-        const order = new Order("O1", customer.id, [orderItem1, orderItem2]);
-        
-        const orderRepository = new OrderRepository();
-        await orderRepository.create(order);
-    
-        await sequelize.transaction(async (t) => {
-          OrderItemModel.destroy({
-            where: { order_id: order.id },
-          });
-          const items = order.items.map((item) => ({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            product_id: item.productId,
-            quantity: item.quantity,
-            order_id: order.id,
-          }));
-          await OrderItemModel.bulkCreate(items, { transaction: t });
-          await OrderModel.update(
-            { total: order.total() },
-            { where: { id: order.id }, transaction: t }
-          );
-        });
-    
-        const orderItem3 = new OrderItem(
-          "OI3",
-          "Order Item 3",
-          product3.price,
-          product3.id,
-          1
-        );
-    
-        order.addItem(orderItem3);
-    
-        await orderRepository.update(order);
-    
-        const orderFromDB = await OrderModel.findOne({
-          where: { id: order.id },
-          include: ["items"],
-        });
-    
-        expect(orderFromDB?.items.length).toBe(2);
-        expect(orderFromDB?.total).toBe(order.total());
-    
-        order.removeItem(orderItem1.id);
-        order.removeItem(orderItem2.id);
-    
-        await orderRepository.update(order);
-    
-        const orderFromDB2 = await OrderModel.findOne({
-          where: { id: order.id },
-          include: ["items"],
-        });
-    
-        expect(orderFromDB2?.items.length).toBe(2);
-        expect(orderFromDB2?.total).toBe(order.total());
-  });
-
-  it("should find an order", async () => {
-    const customerRepository = new CustomerRepository();
-    const customer = new Customer("123", "Customer 1");
+    const customer = new Customer("1", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.changeAddress(address);
     await customerRepository.create(customer);
 
     const productRepository = new ProductRepository();
-    const product1 = new Product("1", "Product 1", 100);
+    const product1 = new Product("01", "Product 1", 100);
+    await productRepository.create(product1);
+
+    const product2 = new Product("02", "Product 2", 200);
+    await productRepository.create(product2);
+
+    const product3 = new Product("03", "Product 3", 300);
+    await productRepository.create(product3);
+
+    const orderItem1 = new OrderItem(
+      "001",
+      "Order Item 1",
+      product1.price,
+      product1.id,
+      1
+    );
+    const orderItem2 = new OrderItem(
+      "002",
+      "Order Item 2",
+      product2.price,
+      product2.id,
+      2
+    );
+
+    const order = new Order("0001", customer.id, [orderItem1, orderItem2]);
+
+    const orderRepository = new OrderRepository();
+    await orderRepository.create(order);
+
+    await sequelize.transaction(async (t) => {
+      OrderItemModel.destroy({
+        where: { order_id: order.id },
+      });
+      const items = order.items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        product_id: item.productId,
+        quantity: item.quantity,
+        order_id: order.id,
+      }));
+      await OrderItemModel.bulkCreate(items, { transaction: t });
+      await OrderModel.update(
+        { total: order.total() },
+        { where: { id: order.id }, transaction: t }
+      );
+    });
+
+    const orderItem3 = new OrderItem(
+      "003",
+      "Order Item 3",
+      product3.price,
+      product3.id,
+      1
+    );
+
+    order.addItem(orderItem3);
+
+    await orderRepository.update(order);
+
+    const orderFromDB = await OrderModel.findOne({
+      where: { id: order.id },
+      include: ["items"],
+    });
+
+    expect(orderFromDB?.items.length).toBe(2);
+    expect(orderFromDB?.total).toBe(order.total());
+
+    order.removeItem(orderItem1.id);
+    order.removeItem(orderItem2.id);
+
+    await orderRepository.update(order);
+
+    const orderFromDB2 = await OrderModel.findOne({
+      where: { id: order.id },
+      include: ["items"],
+    });
+
+    expect(orderFromDB2?.items.length).toBe(2);
+    expect(orderFromDB2?.total).toBe(order.total());
+  });
+
+  it("should find an order", async () => {
+    const customerRepository = new CustomerRepository();
+    const customer = new Customer("1", "Customer 1");
+    const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
+    customer.changeAddress(address);
+    await customerRepository.create(customer);
+
+    const productRepository = new ProductRepository();
+    const product1 = new Product("01", "Product 1", 100);
     await productRepository.create(product1);
 
     const orderItem1 = new OrderItem(
-      "OI1",
+      "001",
       "Order Item 1",
       product1.price,
       product1.id,
@@ -193,7 +192,7 @@ describe("Order repository test", () => {
     );
 
     const orderRepository = new OrderRepository();
-    const order = new Order("O1", customer.id, [orderItem1]);
+    const order = new Order("O001", customer.id, [orderItem1]);
     await orderRepository.create(order);
 
     const orderFound = await orderRepository.find(order.id);
@@ -201,44 +200,48 @@ describe("Order repository test", () => {
     expect(orderFound).toEqual(order);
   });
 
-  it("should find all orders", async () =>{
+  it("should find all orders", async () => {
     const customerRepository = new CustomerRepository();
-    const customer = new Customer("123", "Customer 1");
+    const customer = new Customer("1", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.changeAddress(address);
     await customerRepository.create(customer);
+    console.log(`customer: ${customer}`);
 
     const productRepository = new ProductRepository();
-    const product1 = new Product("1", "Product 1", 100);
+    const product1 = new Product("01", "Product 1", 10);
     await productRepository.create(product1);
+    console.log(`product1: ${product1}`);
+
+    const product2 = new Product("02", "Product 2", 20);
+    await productRepository.create(product2);
+    console.log(`product2: ${product2}`);
 
     const orderItem1 = new OrderItem(
-      "OI1",
-      "Order Item 1",
+      "001",
+      product1.name,
       product1.price,
       product1.id,
       1
-     );
-     
-     const orderItem2 = new OrderItem(
-      "OI2",
-      "Order Item 2",
-      product1.price,
-      product1.id,
+    );
+    console.log(`orderItem1: ${orderItem1}`);
+
+    const orderItem2 = new OrderItem(
+      "002",
+      product2.name,
+      product2.price,
+      product2.id,
       2
-     );
-     
+    );
+    console.log(`orderItem2: ${orderItem2}`);
 
+    const order = new Order("0001", customer.id, [orderItem1, orderItem2]);
     const orderRepository = new OrderRepository();
-    const order1 = new Order("O1", customer.id, [orderItem1]);
-    await orderRepository.create(order1);
-
-    const order2 = new Order("O2", customer.id, [orderItem2]);
-    await orderRepository.create(order2);
+    await orderRepository.create(order);
+    console.log(`order:${order}`);
 
     const orders = await orderRepository.findAll();
-
-    expect(orders).toHaveLength(2);
-    expect(orders).toContainEqual([order1, order2]);
+    console.log(`orders: ${[orders]}`)
+    expect(orders).toEqual([order]);
   });
 })
