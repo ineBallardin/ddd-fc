@@ -33,14 +33,19 @@ export default class OrderRepository {
     await order.update({
       customer_id: entity.customerId,
       total: entity.total(),
-      items: entity.items.map((item) => ({
+    });
+  
+    await OrderItemModel.destroy({ where: { order_id: order.id } });
+    for (let item of entity.items) {
+      await OrderItemModel.create({
         id: item.id,
         name: item.name,
         price: item.price,
         product_id: item.productId,
         quantity: item.quantity,
-      })),
-    });
+        order_id: order.id,
+      });
+    }
   }
 
   async find(id: string): Promise<Order> {

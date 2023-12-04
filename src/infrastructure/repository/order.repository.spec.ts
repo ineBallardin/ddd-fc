@@ -150,26 +150,20 @@ describe("Order repository test", () => {
 
     await orderRepository.update(order);
 
-    const orderFromDB = await OrderModel.findOne({
-      where: { id: order.id },
-      include: ["items"],
-    });
+    const updatedOrder = await orderRepository.find(order.id);
 
-    expect(orderFromDB?.items.length).toBe(2);
-    expect(orderFromDB?.total).toBe(order.total());
+    expect(updatedOrder.items.length).toBe(3);
+    expect(updatedOrder.total()).toBe(order.total());
 
     order.removeItem(orderItem1.id);
     order.removeItem(orderItem2.id);
 
     await orderRepository.update(order);
 
-    const orderFromDB2 = await OrderModel.findOne({
-      where: { id: order.id },
-      include: ["items"],
-    });
+    const updatedOrder2 = await orderRepository.find(order.id);
 
-    expect(orderFromDB2?.items.length).toBe(2);
-    expect(orderFromDB2?.total).toBe(order.total());
+    expect(updatedOrder2.items.length).toBe(1);
+    expect(updatedOrder2.total()).toBe(order.total());
   });
 
   it("should find an order", async () => {
