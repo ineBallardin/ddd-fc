@@ -200,16 +200,13 @@ describe("Order repository test", () => {
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
     customer.changeAddress(address);
     await customerRepository.create(customer);
-    console.log(`customer: ${customer}`);
 
     const productRepository = new ProductRepository();
     const product1 = new Product("01", "Product 1", 10);
     await productRepository.create(product1);
-    console.log(`product1: ${product1}`);
 
     const product2 = new Product("02", "Product 2", 20);
     await productRepository.create(product2);
-    console.log(`product2: ${product2}`);
 
     const orderItem1 = new OrderItem(
       "001",
@@ -218,7 +215,6 @@ describe("Order repository test", () => {
       product1.id,
       1
     );
-    console.log(`orderItem1: ${orderItem1}`);
 
     const orderItem2 = new OrderItem(
       "002",
@@ -227,15 +223,12 @@ describe("Order repository test", () => {
       product2.id,
       2
     );
-    console.log(`orderItem2: ${orderItem2}`);
 
     const order = new Order("0001", customer.id, [orderItem1, orderItem2]);
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
-    console.log(`order:${order}`);
 
     const orders = await orderRepository.findAll();
-    console.log(`orders: ${[orders]}`)
     expect(orders).toEqual([order]);
   });
 })
