@@ -119,25 +119,6 @@ describe("Order repository test", () => {
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
 
-    await sequelize.transaction(async (t) => {
-      OrderItemModel.destroy({
-        where: { order_id: order.id },
-      });
-      const items = order.items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        product_id: item.productId,
-        quantity: item.quantity,
-        order_id: order.id,
-      }));
-      await OrderItemModel.bulkCreate(items, { transaction: t });
-      await OrderModel.update(
-        { total: order.total() },
-        { where: { id: order.id }, transaction: t }
-      );
-    });
-
     const orderItem3 = new OrderItem(
       "003",
       "Order Item 3",
