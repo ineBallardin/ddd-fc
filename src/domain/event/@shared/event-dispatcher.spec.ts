@@ -195,7 +195,7 @@ describe("Domain events tests", () => {
     ).toMatchObject(eventHandler2);
 
     const customer = new Customer("customerId1", "Customer 1");
-    customer.Address = new Address("Street 1", 1, "City Y", "12345-678");
+    customer.Address = new Address("Rua 1", 1, "Cidade Y", "12345-678");
 
     const customerCreatedEvent = new CustomerCreatedEvent({
       id: customer.id,
